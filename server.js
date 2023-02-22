@@ -9,17 +9,16 @@ server.listen(3000, () => {
 
 
 io.on("connection", socket => {
-    console.log("A user connected...");
   
     socket.on("send message", message => {
-      const searchQuery = `SELECT answer FROM questions_answers WHERE question = '${message}'`;
+      const searchQuery = `SELECT svar FROM chatbot_svar WHERE frågor = '${message}'`;
       connection.query(searchQuery, (err, results) => {
         if (err) throw err;
 
         if (results.length > 0) {
-          socket.emit("receive message", results[0].answer);
+          socket.emit("receive message", results[0].svar);
         } else {
-          socket.emit("receive message", "Sorry, I don't understand your question. Please try again.");
+          socket.emit("receive message", "Förlåt jag känner inte till frågan.");
         }
       });
     });

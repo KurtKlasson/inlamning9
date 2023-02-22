@@ -4,10 +4,10 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "faq_db";
+$dbname = "Chatbot";
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+    die("Anslutning misslyckas" . mysqli_connect_error());
 }
