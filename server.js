@@ -1,40 +1,53 @@
-var mysql = require('mysql');
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
-var con = mysql.createConnection({
+var mysql = require('mysql');
+const { waitForDebugger } = require('inspector');
+
+var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "mydb"
+  database: "chatbot"
 });
 
-con.connect(function(err) {
+connection.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
 
-
-const express = require("express");
-const app = express();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-
-server.listen(3000, () => {
-  console.log("Server started on port 3000");
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
 });
 
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
 
-io.on("connection", socket => {
-  
-    socket.on("send message", message => {
-      const searchQuery = `SELECT svar FROM chatbot_svar WHERE frågor = '${message}'`;
-      connection.query(searchQuery, (err, results) => {
-        if (err) throw err;
+io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on("message", (data) => {
+        console.log(data)
+        socket.emit("receive message", data);
 
-        if (results.length > 0) {
-          socket.emit("receive message", results[0].svar);
-        } else {
-          socket.emit("receive message", "Förlåt jag känner inte till frågan.");
-        }
-      });
-    });
-  });   
+        const searchQuery = "SELECT output FROM answers WHERE input" = $data;
+        connection.query(searchQuery, (err, results) => {
+            if (err) throw err;
+            if (results.length > 0) {
+                console.log("Lyckades med hämtning")
+              socket.emit("receive message", results[0].output);
+            }
+             else {
+                console.log("Misslyckades med hämtning")
+              socket.emit(
+                "receive message",
+                "förlåt, jag förstår inte din fråga. Försök igen."
+              );
+            }
+          })
+    })
+});
