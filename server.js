@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
         console.log(data)
         socket.emit("receive message", data);
 
-        const searchQuery = "SELECT output FROM answers WHERE input" = $data;
+        const searchQuery = "SELECT output FROM answers WHERE input = '" + data + "'";
         connection.query(searchQuery, (err, results) => {
             if (err) throw err;
             if (results.length > 0) {
